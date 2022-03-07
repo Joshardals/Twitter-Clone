@@ -17,7 +17,8 @@ export default function Home() {
   );
 }
 
-const Wrapper = tw.div``;
+const Wrapper = tw.div`
+`;
 const Content = tw.div`
   bg-black min-h-screen max-w-[1500px] mx-auto
 `;

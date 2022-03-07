@@ -44,14 +44,14 @@ const Sidebar = () => {
 };
 const Wrapper = tw.div`
     hidden sm:flex flex-col items-center xl:items-start
-    xl:w-[340px] p-2 fixed h-full border-r border-r-[#d9d9d9]
+    xl:w-[340px] p-2 fixed h-full
 `;
 const Logo = tw.div`
     flex items-center justify-center w-14 h-14
     hoverAnimation p-0 xl:ml-24
 `;
 const LinksContainer = tw.div`
-    space-y-2.5 mt-4 mb-2.5= text-white
+     mt-4 mb-2.5 text-white
 `;
 const Tweet = tw.button`
     hidden xl:inline ml-auto bg-[#1d9fb0] text-white 
