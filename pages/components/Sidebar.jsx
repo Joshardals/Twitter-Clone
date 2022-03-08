@@ -59,7 +59,7 @@ const Tweet = tw.button`
     outline-none
 `;
 const UserProfile = tw.div`
-    xl:ml-24 flex items-center justify-center text-[#d9d9d9] hoverAnimation
+    xl:ml-auto xl:-mr-2.5 flex items-center justify-center text-[#d9d9d9] hoverAnimation
     mt-auto
 `;
 const ProfilePic = tw.img`

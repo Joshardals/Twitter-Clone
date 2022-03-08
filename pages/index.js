@@ -1,6 +1,7 @@
 import Head from "next/head";
 import tw from "tailwind-styled-components";
 import Sidebar from "./components/Sidebar";
+import Feed from "./components/Feed";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
 
       <Content>
         <Sidebar />
+        <Feed />
       </Content>
     </Wrapper>
   );
@@ -20,5 +22,5 @@ export default function Home() {
 const Wrapper = tw.div`
 `;
 const Content = tw.div`
-  bg-black min-h-screen max-w-[1500px] mx-auto
+  bg-black min-h-screen max-w-[1500px] mx-auto flex
 `;
