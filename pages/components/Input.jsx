@@ -1,19 +1,36 @@
-import { PhotographIcon, XIcon } from "@heroicons/react/outline";
+import {
+  CalendarIcon,
+  ChartBarIcon,
+  EmojiHappyIcon,
+  PhotographIcon,
+  XIcon,
+} from "@heroicons/react/outline";
 import React, { useRef, useState } from "react";
 import tw from "tailwind-styled-components";
+import "emoji-mart/css/emoji-mart.css";
+import { Picker } from "emoji-mart";
 
 const Input = () => {
   const [input, setInput] = useState("");
   const [selectedFile, setSelectedFile] = useState();
   const filePickerRef = useRef(null);
+  const [showEmojis, setShowEmojis] = useState(false);
 
   const addImageToPost = () => {};
+  const addEmoji = (e) => {
+    let sym = e.unified.split("-");
+    let codesArray = [];
+    sym.forEach((el) => codesArray.push("0x" + el));
+    let emoji = String.fromCodePoint(...codesArray);
+    setInput(input + emoji);
+  };
+  const sendPost = () => {};
 
   return (
     <Wrapper>
-      <ProfileImg src="/download.jpg" />
+      <ProfileImg alt="profile photo" src="/download.jpg" />
       <TextField>
-        <Text>
+        <Text className={`${selectedFile && "pb-7"} ${input && "space-y-2.5"}`}>
           <TextArea
             rows="2"
             value={input}
@@ -31,15 +48,42 @@ const Input = () => {
         </Text>
 
         <IconsTweet>
-          <Icons onClick={() => filePickerRef.current.click()}>
-            <PhotographIcon className="h-[22px] text-[#1d9bf0]" />
-            <File
-              type="file"
-              hidden
-              onChange={addImageToPost}
-              ref={filePickerRef}
-            />
-          </Icons>
+          <AllIcons>
+            <IconOne onClick={() => filePickerRef.current.click()}>
+              <PhotographIcon className="h-[22px] text-[#1d9bf0]" />
+              <File
+                type="file"
+                hidden
+                onChange={addImageToPost}
+                ref={filePickerRef}
+              />
+            </IconOne>
+
+            <IconTwo>
+              <ChartBarIcon className="text-[#1d9bf0] h-[22px] rotate-90" />
+            </IconTwo>
+            <IconThree onClick={() => setShowEmojis(!showEmojis)}>
+              <EmojiHappyIcon className="text-[#1d9bf0] h-[22px]" />
+            </IconThree>
+            <IconFour>
+              <CalendarIcon className="text-[#1d9bf0] h-[22px]" />
+            </IconFour>
+
+            {showEmojis ? (
+              <Picker
+                onSelect={addEmoji}
+                style={{
+                  position: "absolute",
+                  marginTop: "465px",
+                  marginLeft: -40,
+                  maxWidth: "320px",
+                  borderRadius: "20px",
+                }}
+                theme="dark"
+              />
+            ) : null}
+          </AllIcons>
+          <Tweet disabled={!input.trim() && !selectedFile}>Tweet</Tweet>
         </IconsTweet>
       </TextField>
     </Wrapper>
@@ -71,10 +115,27 @@ const SelectedImage = tw.img`
     rounded-2xl max-h-80 object-contain
 `;
 const IconsTweet = tw.div`
-    flex items-center justify-between pt-2.5
+    flex items-center pt-2.5 justify-between
 `;
-const Icons = tw.div`
+const AllIcons = tw.div`
     flex items-center
 `;
+const IconOne = tw.div`
+    flex items-center icon
+`;
 const File = tw.input``;
+const IconTwo = tw.div`
+    icon
+`;
+const IconThree = tw.div`
+    icon
+`;
+const IconFour = tw.div`
+    icon
+`;
+const Tweet = tw.button`
+    bg-[#1d9bf0] text-white rounded-full px-4 py-1.5 font-bold
+    shadow-md hover:bg-[#1a8cd8] disabled:hover:bg-[#1d9bf0] disabled:opacity-50 
+    disabled:cursor-default 
+`;
 export default Input;
