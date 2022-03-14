@@ -9,7 +9,15 @@ import React, { useRef, useState } from "react";
 import tw from "tailwind-styled-components";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
-
+import { db, storage } from "../firebase";
+import {
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  updateDoc,
+} from "@firebase/firestore";
+import { getDownloadURL, ref, uploadString } from "@firebase/storage";
 const Input = () => {
   const [input, setInput] = useState("");
   const [selectedFile, setSelectedFile] = useState();
