@@ -9,7 +9,7 @@ import React, { useRef, useState } from "react";
 import tw from "tailwind-styled-components";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
-import { db, storage } from "../firebase";
+import { db, storage } from "../../firebase";
 import {
   addDoc,
   collection,
@@ -19,6 +19,7 @@ import {
 } from "@firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "@firebase/storage";
 const Input = () => {
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
   const [selectedFile, setSelectedFile] = useState();
   const filePickerRef = useRef(null);
@@ -32,7 +33,18 @@ const Input = () => {
     let emoji = String.fromCodePoint(...codesArray);
     setInput(input + emoji);
   };
-  const sendPost = () => {};
+  const sendPost = async () => {
+    if (loading) return;
+    setLoading(true);
+    const docRef = await addDoc(collection(db, "posts"), {
+        // id: session.user.uid, 
+        // username: session.user.name, 
+        // userImg: session.user.image,  
+        // tag: session.user.tag, 
+        text: input, 
+        timestamp: serverTimestamp(),  
+    });
+  };
 
   return (
     <Wrapper>
