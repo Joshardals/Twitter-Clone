@@ -25,7 +25,15 @@ const Input = () => {
   const filePickerRef = useRef(null);
   const [showEmojis, setShowEmojis] = useState(false);
 
-  const addImageToPost = () => {};
+  const addImageToPost = (e) => {
+    const reader = new FileReader();
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+    reader.onload = (readerEvent) => {
+      setSelectedFile(readerEvent.target.result);
+    };
+  };
   const addEmoji = (e) => {
     let sym = e.unified.split("-");
     let codesArray = [];
@@ -37,17 +45,33 @@ const Input = () => {
     if (loading) return;
     setLoading(true);
     const docRef = await addDoc(collection(db, "posts"), {
-        // id: session.user.uid, 
-        // username: session.user.name, 
-        // userImg: session.user.image,  
-        // tag: session.user.tag, 
-        text: input, 
-        timestamp: serverTimestamp(),  
+      // id: session.user.uid,
+      // username: session.user.name,
+      // userImg: session.user.image,
+      // tag: session.user.tag,
+      text: input,
+      timestamp: serverTimestamp(),
     });
+
+    const imageRef = ref(storage, `posts/${docRef.id}/image`);
+
+    if (selectedFile) {
+      await uploadString(imageRef, selectedFile, "data_url").then(async () => {
+        const downloadURL = await getDownloadURL(imageRef);
+        await updateDoc(doc(db, "posts", docRef.id), {
+          image: downloadURL,
+        });
+      });
+    }
+
+    setLoading(false);
+    setInput("");
+    setSelectedFile(null);
+    setShowEmojis(false);
   };
 
   return (
-    <Wrapper>
+    <Wrapper className={`${loading && "opacity-60"}`}>
       <ProfileImg alt="profile photo" src="/download.jpg" />
       <TextField>
         <Text className={`${selectedFile && "pb-7"} ${input && "space-y-2.5"}`}>
@@ -68,42 +92,44 @@ const Input = () => {
         </Text>
 
         <IconsTweet>
-          <AllIcons>
-            <IconOne onClick={() => filePickerRef.current.click()}>
-              <PhotographIcon className="h-[22px] text-[#1d9bf0]" />
-              <File
-                type="file"
-                hidden
-                onChange={addImageToPost}
-                ref={filePickerRef}
-              />
-            </IconOne>
+          {!loading && (
+            <AllIcons>
+              <IconOne onClick={() => filePickerRef.current.click()}>
+                <PhotographIcon className="h-[22px] text-[#1d9bf0]" />
+                <File
+                  type="file"
+                  hidden
+                  onChange={addImageToPost}
+                  ref={filePickerRef}
+                />
+              </IconOne>
 
-            <IconTwo>
-              <ChartBarIcon className="text-[#1d9bf0] h-[22px] rotate-90" />
-            </IconTwo>
-            <IconThree onClick={() => setShowEmojis(!showEmojis)}>
-              <EmojiHappyIcon className="text-[#1d9bf0] h-[22px]" />
-            </IconThree>
-            <IconFour>
-              <CalendarIcon className="text-[#1d9bf0] h-[22px]" />
-            </IconFour>
+              <IconTwo>
+                <ChartBarIcon className="text-[#1d9bf0] h-[22px] rotate-90" />
+              </IconTwo>
+              <IconThree onClick={() => setShowEmojis(!showEmojis)}>
+                <EmojiHappyIcon className="text-[#1d9bf0] h-[22px]" />
+              </IconThree>
+              <IconFour>
+                <CalendarIcon className="text-[#1d9bf0] h-[22px]" />
+              </IconFour>
 
-            {showEmojis ? (
-              <Picker
-                onSelect={addEmoji}
-                style={{
-                  position: "absolute",
-                  marginTop: "465px",
-                  marginLeft: -40,
-                  maxWidth: "320px",
-                  borderRadius: "20px",
-                }}
-                theme="dark"
-              />
-            ) : null}
-          </AllIcons>
-          <Tweet disabled={!input.trim() && !selectedFile}>Tweet</Tweet>
+              {showEmojis ? (
+                <Picker
+                  onSelect={addEmoji}
+                  style={{
+                    position: "absolute",
+                    marginTop: "465px",
+                    marginLeft: -40,
+                    maxWidth: "320px",
+                    borderRadius: "20px",
+                  }}
+                  theme="dark"
+                />
+              ) : null}
+            </AllIcons>
+          )}
+          <Tweet disabled={!input.trim() && !selectedFile} onClick={sendPost}>Tweet</Tweet>
         </IconsTweet>
       </TextField>
     </Wrapper>
